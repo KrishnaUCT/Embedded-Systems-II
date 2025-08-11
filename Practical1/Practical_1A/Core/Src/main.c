@@ -18,7 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include <math.h>
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdint.h>
@@ -48,6 +48,8 @@ TIM_HandleTypeDef htim16;
 uint8_t mode = 0;
 int8_t led_index = 0;
 int8_t direction = 1;
+
+int8_t mode3_init = 0;
 
 int8_t speed = 1;
 
@@ -120,8 +122,9 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-    // TODO: Check pushbuttons to change timer delay
+    // TODO: Check pushbuttons
 	if (LL_GPIO_IsInputPinSet(Button0_GPIO_Port, Button0_Pin) == 0){
+		// Changes timer delay
 		if (speed == 1){
 			speed = 0;
 			HAL_TIM_Base_Stop_IT(&htim16);
@@ -138,19 +141,23 @@ int main(void)
 		HAL_Delay(200);
 
 	} else if (LL_GPIO_IsInputPinSet(Button1_GPIO_Port, Button1_Pin) == 0){
+		// Pattern One (moving ON led)
 		mode = 1;
 		led_index = 0;
 		direction = 1;
 		HAL_Delay(200);
 
 	} else if (LL_GPIO_IsInputPinSet(Button2_GPIO_Port, Button2_Pin) == 0){
+		// Pattern 2 (moving OFF led)
 		mode = 2;
 		led_index = 0;
 		direction = 1;
 		HAL_Delay(200);
 	} else if (LL_GPIO_IsInputPinSet(Button3_GPIO_Port, Button3_Pin) == 0){
+		// Pattern 3 (sparkle)
 		mode = 3;
 		led_index = 0;
+		mode3_init = 0;
 		HAL_Delay(200);
 	}
     
@@ -366,59 +373,45 @@ void TIM16_IRQHandler(void)
 
 	  if (mode == 1){
 
-		  // Turn off all the LEDs
-		  DISPLAY_NUMBER_ON_LED(0);
+		  // Turn LED corresponding to led_index high
+		  DISPLAY_NUMBER_ON_LED((uint16_t) 1 << led_index);
 
-		  switch(led_index){
-			  case 0:  LL_GPIO_SetOutputPin(LED0_GPIO_Port, LED0_Pin); break;
-			  case 1:  LL_GPIO_SetOutputPin(LED1_GPIO_Port, LED1_Pin); break;
-			  case 2:  LL_GPIO_SetOutputPin(LED2_GPIO_Port, LED2_Pin); break;
-			  case 3:  LL_GPIO_SetOutputPin(LED3_GPIO_Port, LED3_Pin); break;
-			  case 4:  LL_GPIO_SetOutputPin(LED4_GPIO_Port, LED4_Pin); break;
-			  case 5:  LL_GPIO_SetOutputPin(LED5_GPIO_Port, LED5_Pin); break;
-			  case 6:  LL_GPIO_SetOutputPin(LED6_GPIO_Port, LED6_Pin); break;
-			  case 7:  LL_GPIO_SetOutputPin(LED7_GPIO_Port, LED7_Pin); break;
-		  }
 	  } else if (mode == 2){
 
-		  // Turn on all the LEDs
-		  DISPLAY_NUMBER_ON_LED(255);
+		  // Turn LED corresponding to led_index low (bitwise AND with complement)
+		  DISPLAY_NUMBER_ON_LED(255 & ~(1 << led_index));
 
-		  switch(led_index){
-			  case 0:  LL_GPIO_ResetOutputPin(LED0_GPIO_Port, LED0_Pin); break;
-			  case 1:  LL_GPIO_ResetOutputPin(LED1_GPIO_Port, LED1_Pin); break;
-			  case 2:  LL_GPIO_ResetOutputPin(LED2_GPIO_Port, LED2_Pin); break;
-			  case 3:  LL_GPIO_ResetOutputPin(LED3_GPIO_Port, LED3_Pin); break;
-			  case 4:  LL_GPIO_ResetOutputPin(LED4_GPIO_Port, LED4_Pin); break;
-			  case 5:  LL_GPIO_ResetOutputPin(LED5_GPIO_Port, LED5_Pin); break;
-			  case 6:  LL_GPIO_ResetOutputPin(LED6_GPIO_Port, LED6_Pin); break;
-			  case 7:  LL_GPIO_ResetOutputPin(LED7_GPIO_Port, LED7_Pin); break;
-		  }
+
 	  } else if (mode == 3){
+
+		  if (mode3_init == 0){
+			  // Initial set; switch off all LEDs
+			  mode3_init = 1;
+			  DISPLAY_NUMBER_ON_LED(0);
+		  } else if (mode3_init == 1){
+			  // Set random number
+			  mode3_init = 2;
+			  DISPLAY_NUMBER_ON_LED(rand() % 256);
+		  }
+
 		  // Set to random delay
 		  HAL_TIM_Base_Stop_IT(&htim16);
 		  __HAL_TIM_SET_PRESCALER(&htim16, 800 + rand() % (8400-800+1));
 		  __HAL_TIM_SET_COUNTER(&htim16, 0);
 		  HAL_TIM_Base_Start_IT(&htim16);
 
-		  switch(led_index){
-			  case 0:  LL_GPIO_ResetOutputPin(LED0_GPIO_Port, LED0_Pin); break;
-			  case 1:  LL_GPIO_ResetOutputPin(LED1_GPIO_Port, LED1_Pin); break;
-			  case 2:  LL_GPIO_ResetOutputPin(LED2_GPIO_Port, LED2_Pin); break;
-			  case 3:  LL_GPIO_ResetOutputPin(LED3_GPIO_Port, LED3_Pin); break;
-			  case 4:  LL_GPIO_ResetOutputPin(LED4_GPIO_Port, LED4_Pin); break;
-			  case 5:  LL_GPIO_ResetOutputPin(LED5_GPIO_Port, LED5_Pin); break;
-			  case 6:  LL_GPIO_ResetOutputPin(LED6_GPIO_Port, LED6_Pin); break;
-			  case 7:  LL_GPIO_ResetOutputPin(LED7_GPIO_Port, LED7_Pin); break;
-		  }
+		  LL_GPIO_ResetOutputPin(led_ports[led_index], led_pins[led_index]);
+
 	  }
 
+	  // Manage led index
 	  led_index += direction;
 
 	  if (led_index > 7){
 		  led_index = 6;
 		  direction = -1;
 		  if (mode == 3){
+			  // Set new random number and reset index
 			  DISPLAY_NUMBER_ON_LED(rand() % 256);
 			  led_index = 0;
 		  }
@@ -430,28 +423,7 @@ void TIM16_IRQHandler(void)
 
 }
 
-void OFF_ALL_LED(void){
-	  LL_GPIO_ResetOutputPin(LED0_GPIO_Port, LED0_Pin);
-	  LL_GPIO_ResetOutputPin(LED1_GPIO_Port, LED1_Pin);
-	  LL_GPIO_ResetOutputPin(LED2_GPIO_Port, LED2_Pin);
-	  LL_GPIO_ResetOutputPin(LED3_GPIO_Port, LED3_Pin);
-	  LL_GPIO_ResetOutputPin(LED4_GPIO_Port, LED4_Pin);
-	  LL_GPIO_ResetOutputPin(LED5_GPIO_Port, LED5_Pin);
-	  LL_GPIO_ResetOutputPin(LED6_GPIO_Port, LED6_Pin);
-	  LL_GPIO_ResetOutputPin(LED7_GPIO_Port, LED7_Pin);
-}
-
-void ON_ALL_LED(void){
-	  LL_GPIO_SetOutputPin(LED0_GPIO_Port, LED0_Pin);
-	  LL_GPIO_SetOutputPin(LED1_GPIO_Port, LED1_Pin);
-	  LL_GPIO_SetOutputPin(LED2_GPIO_Port, LED2_Pin);
-	  LL_GPIO_SetOutputPin(LED3_GPIO_Port, LED3_Pin);
-	  LL_GPIO_SetOutputPin(LED4_GPIO_Port, LED4_Pin);
-	  LL_GPIO_SetOutputPin(LED5_GPIO_Port, LED5_Pin);
-	  LL_GPIO_SetOutputPin(LED6_GPIO_Port, LED6_Pin);
-	  LL_GPIO_SetOutputPin(LED7_GPIO_Port, LED7_Pin);
-}
-
+// Converts decimal number to 8 bit binary to display using LEDs 0-7
 void DISPLAY_NUMBER_ON_LED(uint16_t number){
 	for (int i = 0; i < 8; i++){
 		if (number & (1 << i)){
