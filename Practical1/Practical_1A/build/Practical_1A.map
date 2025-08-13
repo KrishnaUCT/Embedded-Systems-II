@@ -2192,19 +2192,19 @@ LOAD /opt/st/stm32cubeide_1.19.0_2/plugins/com.st.stm32cube.ide.mcu.externaltool
  .debug_line    0x00008874      0x771 build/stm32f0xx_ll_utils.o
  .debug_line    0x00008fe5       0x74 build/startup_stm32f051x8.o
 
-.debug_str      0x00000000     0x2a27
- .debug_str     0x00000000     0x2a27 build/main.o
+.debug_str      0x00000000     0x2a69
+ .debug_str     0x00000000     0x2a69 build/main.o
                                 0xcdf (size before relaxing)
- .debug_str     0x00002a27      0x1e4 build/stm32f0xx_it.o
- .debug_str     0x00002a27      0x255 build/system_stm32f0xx.o
- .debug_str     0x00002a27      0x385 build/stm32f0xx_ll_gpio.o
- .debug_str     0x00002a27      0x6c9 build/stm32f0xx_hal.o
- .debug_str     0x00002a27      0x60a build/stm32f0xx_hal_cortex.o
- .debug_str     0x00002a27     0x1669 build/stm32f0xx_hal_tim.o
- .debug_str     0x00002a27      0xe75 build/stm32f0xx_hal_tim_ex.o
- .debug_str     0x00002a27      0x6f8 build/stm32f0xx_hal_msp.o
- .debug_str     0x00002a27      0x5eb build/stm32f0xx_ll_utils.o
- .debug_str     0x00002a27       0x6e build/startup_stm32f051x8.o
+ .debug_str     0x00002a69      0x1e4 build/stm32f0xx_it.o
+ .debug_str     0x00002a69      0x255 build/system_stm32f0xx.o
+ .debug_str     0x00002a69      0x385 build/stm32f0xx_ll_gpio.o
+ .debug_str     0x00002a69      0x6c9 build/stm32f0xx_hal.o
+ .debug_str     0x00002a69      0x60a build/stm32f0xx_hal_cortex.o
+ .debug_str     0x00002a69     0x1669 build/stm32f0xx_hal_tim.o
+ .debug_str     0x00002a69      0xe75 build/stm32f0xx_hal_tim_ex.o
+ .debug_str     0x00002a69      0x6f8 build/stm32f0xx_hal_msp.o
+ .debug_str     0x00002a69      0x5eb build/stm32f0xx_ll_utils.o
+ .debug_str     0x00002a69       0x74 build/startup_stm32f051x8.o
 
 .comment        0x00000000       0x43
  .comment       0x00000000       0x43 build/main.o

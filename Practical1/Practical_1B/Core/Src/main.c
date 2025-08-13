@@ -44,6 +44,13 @@
 
 /* USER CODE BEGIN PV */
 //TODO: Define and initialise the global varibales required
+int image_sizes[] = {128, 160, 192, 224, 256};
+int executions[5];
+int checksums[5];
+int completed_executions = 0;
+uint64_t checksum = 0;
+uint32_t start_time = 0;
+uint32_t end_time = 0;
 /*
   start_time
   end_time
@@ -99,27 +106,44 @@ int main(void)
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
   //TODO: Turn on LED 0 to signify the start of the operation
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
   
+  for (int i = 0; i < sizeof(image_sizes); i++){
 
-  //TODO: Record the start time
-  
-  
-  //TODO: Call the Mandelbrot Function and store the output in the checksum variable defined initially
-  
+	  int width = image_sizes[i];
+	  int height = image_sizes[i];
 
-  //TODO: Record the end time
-  
+	  //TODO: Record the start time
+	  start_time = HAL_GetTick();
 
-  //TODO: Calculate the execution time
-  
 
-  //TODO: Turn on LED 1 to signify the end of the operation
-  
+	  //TODO: Call the Mandelbrot Function and store the output in the checksum variable defined initially
+	  checksum = calculate_mandelbrot_double(width, height, MAX_ITER);
 
-  //TODO: Hold the LEDs on for a 1s delay
-  
+	  //TODO: Record the end time
+	  end_time = HAL_GetTick();
 
-  //TODO: Turn off the LEDs
+	  executions[completed_executions] = end_time - start_time;
+	  checksums[completed_executions] = checksum;
+	  completed_executions++;
+
+	  //TODO: Calculate the execution time
+
+
+	  //TODO: Turn on LED 1 to signify the end of the operation
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
+
+	  //TODO: Hold the LEDs on for a 1s delay
+	  HAL_Delay(1000);
+
+	  //TODO: Turn off the LEDs
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+  
+  }
+  
+  //TODO: Turn off all LEDs
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
   
 
   /* USER CODE END 2 */
@@ -204,6 +228,37 @@ static void MX_GPIO_Init(void)
 uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int max_iterations){
   uint64_t mandelbrot_sum = 0;
     //TODO: Complete the function implementation
+    const int32_t SCALE = 1 << 16;
+
+    int32_t scale_width = (3.5 * SCALE) / width;
+    int32_t scale_height = (2 * SCALE) / height;
+    int32_t offset_x = (int32_t)(-2.5*SCALE);
+    int32_t offset_y = (int32_t)(-1.0*SCALE);
+
+    for (int y = 0; y < height; y++){
+    	int32_t y0 = y * scale_height + offset_y;
+    	for (int x = 0; x < width; x++){
+    		int32_t x0 = x * scale_width + offset_x;
+
+    		int32_t xi = 0;
+    		int32_t yi = 0;
+    		int iteration = 0;
+
+    		while (iteration < max_iterations) {
+    			int32_t xi2 = (int32_t) xi*xi/SCALE;
+    			int32_t yi2 = (int32_t) yi*yi/SCALE;
+    			if (xi2 + yi2 > (4*SCALE)){
+    				break;
+    			}
+    			int32_t temp = xi2 - yi2;
+    			yi = (int64_t) 2 * xi * yi / SCALE + y0;
+    			xi = temp + x0;
+    			iteration++;
+    		}
+    		mandelbrot_sum += iteration;
+
+    	}
+    }
     
     return mandelbrot_sum;
 
@@ -213,8 +268,38 @@ uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int 
 uint64_t calculate_mandelbrot_double(int width, int height, int max_iterations){
     uint64_t mandelbrot_sum = 0;
     //TODO: Complete the function implementation
-    
-    return mandelbrot_sum;
+
+	int32_t scale_width = 3.5 / width;
+	int32_t scale_height = 2 / height;
+	int32_t offset_x = -2.5;
+	int32_t offset_y = -1.0;
+
+	for (int y = 0; y < height; y++){
+		double y0 = y * scale_height + offset_y;
+		for (int x = 0; x < width; x++){
+			double x0 = x * scale_width + offset_x;
+
+			double xi = 0.0;
+			double yi = 0.0;
+			int iteration = 0;
+
+			while (iteration < max_iterations) {
+				double xi2 = xi*xi;
+				double yi2 = yi*yi;
+				if (xi2 + yi2 > 4.0){
+					break;
+				}
+				double temp = xi2 - yi2;
+				yi = 2 * xi * yi + y0;
+				xi = temp + x0;
+				iteration++;
+			}
+			mandelbrot_sum += iteration;
+
+		}
+	}
+
+	return mandelbrot_sum;
 }
 
 /* USER CODE END 4 */
