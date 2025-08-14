@@ -17,6 +17,10 @@
   </div>
 </div>
 
+## Acknowledgement
+
+This repository was modified from https://github.com/EEE3096S-UCT/EEE3096S-2025.git created by the teaching team for the second course on Embedded Systems (EEE3096S).
+
 ## Highlights & Introduction
 This repository contains the code and documentation for the practicals for the  EEE3096S: Embedded Systems II course, a third-year module in Electrical Engineering at the University of Cape Town (UCT).
 
