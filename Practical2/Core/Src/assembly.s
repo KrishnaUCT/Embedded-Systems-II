@@ -56,6 +56,11 @@ main_loop:
  	BEQ sw0_pressed
  	B check_timing
 
+
+sw0_pressed:
+ 	@ Increment by 2
+ 	MOVS R5, #2
+
 check_timing:
 	@ Determine delay timing
 	MOVS R4, #0x02
@@ -66,20 +71,20 @@ check_timing:
 	BL long_delay
 	B do_increment
 
-@ Increment LED value
-do_increment:
-	ADDS R2, R2, R5  @ Add increment amount (R5)
-	MOVS R4, #0xFF   @ Bitmask for 8 LEDs
-	ANDS R2, R2, R4  @ Keep only 8 bits (wrap around)
-	B write_leds
-
-sw0_pressed:
- 	@ Increment by 2
- 	MOVS R5, #2
-
 sw1_pressed:
  	@ Use short delay
 	BL short_delay
+
+@ Increment LED value
+do_increment:
+
+	CMP R2, #0
+	BEQ set_r2
+
+	ADDS R2, R2, R2  @ Add increment amount (R5)
+	MOVS R4, #0xFF   @ Bitmask for 8 LEDs
+	ANDS R2, R2, R4  @ Keep only 8 bits (wrap around)
+	B write_leds
 
 sw2_pressed:
 	@ Set LEDs to 0xAA pattern
@@ -90,13 +95,26 @@ sw3_pressed:
 	@ Freeze
 	B write_leds
 
+set_r2:
+	MOVS R2, #1
 
 
 @ Delay subroutines
 short_delay:
+	PUSH {R6, LR}
 	LDR R6, SHORT_DELAY_CNT
+short_delay_loop:
+	SUBS R6, R6, #1
+	BNE short_delay_loop
+	POP {R6, PC}
+
 long_delay:
+	PUSH {R6, LR}
 	LDR R6, LONG_DELAY_CNT
+long_delay_loop:
+	SUBS R6, R6, #1
+	BNE long_delay_loop
+	POP {R6, PC}
 
 write_leds:
 	STR R2, [R1, #0x14]
@@ -112,4 +130,4 @@ MODER_OUTPUT: 		.word 0x5555
 
 @ TODO: Add your own values for these delays
 LONG_DELAY_CNT: 	.word 600000
-SHORT_DELAY_CNT: 	.word 200000
+SHORT_DELAY_CNT: 	.word 2000000
