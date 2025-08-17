@@ -34,8 +34,69 @@ ASM_Main:
 
 @ TODO: Add code, labels and logic for button checks and LED patterns
 
-main_loop:
 
+main_loop:
+ 	@ Check buttons on GPIOA
+ 	LDR R3, [R0, #0x10]
+
+ 	@ Check SW3
+ 	MOVS R4, #0x08
+ 	ANDS R4, R3, R4
+ 	BEQ sw3_pressed
+
+ 	@ Check SW2
+ 	MOVS R4, #0x04
+ 	ANDS R4, R3, R4
+ 	BEQ sw2_pressed
+
+ 	@ Determine increment amount
+ 	MOVS R5, #1
+ 	MOVS R4, #0x01
+ 	ANDS R4, R3, R4
+ 	BEQ sw0_pressed
+ 	B check_timing
+
+check_timing:
+	@ Determine delay timing
+	MOVS R4, #0x02
+	ANDS R4, R3, R4
+	BEQ sw1_pressed
+
+	@ Long delay; sw1 not pressed
+	BL long_delay
+	B do_increment
+
+@ Increment LED value
+do_increment:
+	ADDS R2, R2, R5  @ Add increment amount (R5)
+	MOVS R4, #0xFF   @ Bitmask for 8 LEDs
+	ANDS R2, R2, R4  @ Keep only 8 bits (wrap around)
+	B write_leds
+
+sw0_pressed:
+ 	@ Increment by 2
+ 	MOVS R5, #2
+
+sw1_pressed:
+ 	@ Use short delay
+	BL short_delay
+
+sw2_pressed:
+	@ Set LEDs to 0xAA pattern
+	MOVS R2, #0x0A
+	B write_leds
+
+sw3_pressed:
+	@ Freeze
+	B write_leds
+
+
+
+@ Delay subroutines
+short_delay:
+	LDR R6, SHORT_DELAY_CNT
+long_delay:
+	LDR R6, LONG_DELAY_CNT
 
 write_leds:
 	STR R2, [R1, #0x14]
@@ -50,5 +111,5 @@ GPIOB_BASE:  		.word 0x48000400
 MODER_OUTPUT: 		.word 0x5555
 
 @ TODO: Add your own values for these delays
-LONG_DELAY_CNT: 	.word 0
-SHORT_DELAY_CNT: 	.word 0
+LONG_DELAY_CNT: 	.word 600000
+SHORT_DELAY_CNT: 	.word 200000
