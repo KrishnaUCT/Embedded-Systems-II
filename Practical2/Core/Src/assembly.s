@@ -78,12 +78,16 @@ sw1_pressed:
 @ Increment LED value
 do_increment:
 
-	CMP R2, #0
-	BEQ set_r2
+	ADDS R2, R2, R5  @ Add increment amount (R5)
 
-	ADDS R2, R2, R2  @ Add increment amount (R5)
 	MOVS R4, #0xFF   @ Bitmask for 8 LEDs
 	ANDS R2, R2, R4  @ Keep only 8 bits (wrap around)
+
+	@ Shift
+	@ADDS R2, R2, R2
+	@CMP R2, #0
+	@BEQ reset_led
+
 	B write_leds
 
 sw2_pressed:
@@ -95,7 +99,7 @@ sw3_pressed:
 	@ Freeze
 	B write_leds
 
-set_r2:
+reset_led:
 	MOVS R2, #1
 
 
@@ -129,5 +133,5 @@ GPIOB_BASE:  		.word 0x48000400
 MODER_OUTPUT: 		.word 0x5555
 
 @ TODO: Add your own values for these delays
-LONG_DELAY_CNT: 	.word 600000
-SHORT_DELAY_CNT: 	.word 2000000
+LONG_DELAY_CNT: 	.word 1866667
+SHORT_DELAY_CNT: 	.word 800000
