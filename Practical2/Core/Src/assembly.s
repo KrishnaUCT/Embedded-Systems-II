@@ -133,5 +133,6 @@ GPIOB_BASE:  		.word 0x48000400
 MODER_OUTPUT: 		.word 0x5555
 
 @ TODO: Add your own values for these delays
-LONG_DELAY_CNT: 	.word 1866667
-SHORT_DELAY_CNT: 	.word 800000
+@ cnt = (delay)(frequency)/(cycles per iteration)
+LONG_DELAY_CNT: 	.word 1400000
+SHORT_DELAY_CNT: 	.word 600000
