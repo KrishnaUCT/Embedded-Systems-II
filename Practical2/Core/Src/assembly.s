@@ -92,7 +92,7 @@ do_increment:
 
 sw2_pressed:
 	@ Set LEDs to 0xAA pattern
-	MOVS R2, #0x0A
+	MOVS R2, #0xAA
 	B write_leds
 
 sw3_pressed:
