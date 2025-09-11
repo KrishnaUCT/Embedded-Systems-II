@@ -45,11 +45,13 @@
 /* USER CODE BEGIN PV */
 //TODO: Define and initialise the global varibales required
 int image_sizes[] = {128, 160, 192, 224, 256};
-uint64_t executions[5];
-uint64_t checksums[5];
+int MAX_ITERS[] = {100,250,500,750,1000};
+uint64_t executions[5][5];
+uint64_t checksums[5][5];
 int completed_executions = 0;
 uint32_t start_time = 0;
 uint32_t end_time = 0;
+volatile int currentIteration = 0;
 /*
   start_time
   end_time
@@ -106,41 +108,41 @@ int main(void)
   /* USER CODE BEGIN 2 */
   //TODO: Turn on LED 0 to signify the start of the operation
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
+  for (int j = 0; j < 5; j++){
 
-  for (int i = 0; i < sizeof(image_sizes); i++){
+	  for (int i = 0; i < 5; i++){
 
-	  int width = image_sizes[i];
-	  int height = image_sizes[i];
+		  int width = image_sizes[i];
+		  int height = image_sizes[i];
 
-	  //TODO: Record the start time
-	  start_time = HAL_GetTick();
-
-
-	  //TODO: Call the Mandelbrot Function and store the output in the checksum variable defined initially
-	  //uint64_t checksum = calculate_mandelbrot_double(width, height, MAX_ITER);
-	  uint64_t checksum = calculate_mandelbrot_double(width, height, MAX_ITER);
-
-	  //TODO: Record the end time
-	  end_time = HAL_GetTick();
-
-	  executions[completed_executions] = end_time - start_time;
-	  checksums[completed_executions] = checksum;
-	  completed_executions++;
-
-	  //TODO: Calculate the execution time
+		  //TODO: Record the start time
+		  start_time = HAL_GetTick();
 
 
-	  //TODO: Turn on LED 1 to signify the end of the operation
-	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
+		  //TODO: Call the Mandelbrot Function and store the output in the checksum variable defined initially
+		  //uint64_t checksum = calculate_mandelbrot_double(width, height, MAX_ITER);
+		  uint64_t checksum = calculate_mandelbrot_double(width, height, MAX_ITERS[j]);
 
-	  //TODO: Hold the LEDs on for a 1s delay
-	  HAL_Delay(1000);
+		  //TODO: Record the end time
+		  end_time = HAL_GetTick();
 
-	  //TODO: Turn off the LEDs
-	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+		  executions[j][i] = end_time - start_time;
+		  checksums[j][i] = checksum;
 
+		  //TODO: Calculate the execution time
+
+
+		  //TODO: Turn on LED 1 to signify the end of the operation
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
+
+		  //TODO: Hold the LEDs on for a 1s delay
+		  HAL_Delay(1000);
+
+		  //TODO: Turn off the LEDs
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+
+	  }
   }
-
   //TODO: Turn off all LEDs
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
 
