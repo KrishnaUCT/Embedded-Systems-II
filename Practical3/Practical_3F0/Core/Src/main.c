@@ -44,7 +44,8 @@
 
 /* USER CODE BEGIN PV */
 //TODO: Define and initialise the global varibales required
-int image_sizes[] = {128, 160, 192, 224, 256};
+int image_widths[] = {128, 256, 512, 640, 800, 1024, 1280, 1600, 1920};
+int image_heights[] = {128, 256, 512, 480, 600, 768, 720, 900, 1080};
 int MAX_ITERS = 100;
 
 #define SYSTICK_LOAD_VAL 0x00FFFFFF
@@ -63,7 +64,7 @@ uint32_t start_time = 0;
 uint32_t end_time = 0;
 uint32_t start_cycles = 0;
 uint32_t end_cycles = 0;
-benchmark_results results[5];
+benchmark_results results[9];
 volatile int currentIteration = 0;
 /*
   start_time
@@ -80,6 +81,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
 uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int max_iterations);
+uint64_t calculate_mandelbrot_fixed_point_arithmetic_split(int width, int height, int max_iterations);
 uint64_t calculate_mandelbrot_double(int width, int height, int max_iterations);
 
 uint32_t get_cycle_count();
@@ -125,9 +127,11 @@ int main(void)
 
   for (int i = 0; i < 5; i++){
 
-	  int width = image_sizes[i];
-	  int height = image_sizes[i];
+	  int width = image_widths[i];
+	  int height = image_heights[i];
 
+	  // memory check
+	  uint32_t required_memory = width * height * sizeof(int32_t) * 2;
 
 	  //TODO: Record the start time
 	  start_time = HAL_GetTick();
@@ -136,7 +140,12 @@ int main(void)
 
 	  //TODO: Call the Mandelbrot Function and store the output in the checksum variable defined initially
 	  //uint64_t checksum = calculate_mandelbrot_double(width, height, MAX_ITER);
-	  uint64_t checksum = calculate_mandelbrot_fixed_point_arithmetic(width, height, MAX_ITERS);
+	  uint64_t checksum;
+	  if (image_widths[i] > 800){
+		  checksum = calculate_mandelbrot_fixed_point_arithmetic_split(width, height, MAX_ITERS);
+	  } else {
+		  checksum = calculate_mandelbrot_fixed_point_arithmetic(width, height, MAX_ITERS);
+	  }
 
 	  //TODO: Record the end time
 	  end_cycles = get_cycle_count();
@@ -144,7 +153,7 @@ int main(void)
 
 	  uint32_t wall_clock_time = (uint32_t)(end_time - start_time);
 
-	  results[i].image_size = image_sizes[i];
+	  results[i].image_size = image_widths[i];
 	  results[i].wall_clock_time_ms = wall_clock_time;
 	  results[i].cpu_cycles = end_cycles - start_cycles;
 	  results[i].checksum = checksum;
@@ -294,6 +303,60 @@ uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int 
     		}
     		mandelbrot_sum += iteration;
 
+    	}
+    }
+
+    return mandelbrot_sum;
+
+}
+
+uint64_t calculate_mandelbrot_fixed_point_arithmetic_split(int width, int height, int max_iterations){
+    uint64_t mandelbrot_sum = 0;
+
+    int split_width = 128;
+    int split_height = 128;
+
+    //TODO: Complete the function implementation
+    const int32_t SCALE = 1 << 16;
+    const int32_t ESCAPE = 4 * SCALE;
+
+    for (int tile_y = 0; tile_y < height; tile_y += split_width){
+    	for (int tile_x = 0; tile_x < width; tile_x += split_height){
+
+    		int actual_tile_width = (tile_x + split_width > width) ? width - tile_x : split_width;
+    		int actual_tile_height = (tile_y + split_height > height) ? height - tile_y : split_height;
+
+			for (int y = 0; y < actual_tile_height; y++){
+				for (int x = 0; x < actual_tile_width; x++){
+
+					int actualX = tile_x + x;
+					int actualY = tile_y + y;
+
+					int32_t x0 = (int32_t)(((int64_t)actualX * (int64_t)(3.5f * SCALE)) / width - (int64_t)(2.5f * SCALE));
+					int32_t y0 = (int32_t)(((int64_t)actualY * (int64_t)(2.0f * SCALE)) / height - (int64_t)(1.0f * SCALE));
+
+					int32_t xi = 0;
+					int32_t yi = 0;
+					int iteration = 0;
+
+					while (iteration < max_iterations) {
+						int32_t xi2 = (int32_t) (((int64_t)xi*(int64_t)xi) >> 16);
+						int32_t yi2 = (int32_t) (((int64_t)yi*(int64_t)yi) >> 16);
+
+						if (xi2 + yi2 > ESCAPE){
+							break;
+						}
+
+						int32_t tmp = xi2 - yi2 + x0;
+						yi = (int32_t)((((int64_t)xi*yi) << 1) >> 16) + y0;
+						xi = tmp;
+
+						iteration++;
+					}
+					mandelbrot_sum += iteration;
+
+				}
+			}
     	}
     }
 
