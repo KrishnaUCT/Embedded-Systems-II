@@ -267,7 +267,7 @@ uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int 
     uint64_t mandelbrot_sum = 0;
 
     //TODO: Complete the function implementation
-    const int32_t SCALE = 1 << 16;
+    const int32_t SCALE = 1000000;
     const int32_t ESCAPE = 4 * SCALE;
 
     for (int y = 0; y < height; y++){
