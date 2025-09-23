@@ -44,8 +44,8 @@
 
 /* USER CODE BEGIN PV */
 //TODO: Define and initialise the global varibales required
-int image_widths[] = {128, 256, 512, 640, 800, 1024, 1280, 1600, 1920};
-int image_heights[] = {128, 256, 512, 480, 600, 768, 720, 900, 1080};
+int image_widths[] = {128, 160, 192, 224, 256};
+int image_heights[] = {128, 160, 192, 224, 256};
 int MAX_ITERS = 100;
 
 #define SYSTICK_LOAD_VAL 0x00FFFFFF
@@ -53,9 +53,7 @@ int MAX_ITERS = 100;
 typedef struct {
 	int image_size;
 	uint64_t wall_clock_time_ms;
-	uint64_t cpu_cycles;
 	uint64_t checksum;
-	float throughput_pixel_per_second;
 } benchmark_results;
 
 
@@ -64,7 +62,7 @@ uint32_t start_time = 0;
 uint32_t end_time = 0;
 uint32_t start_cycles = 0;
 uint32_t end_cycles = 0;
-benchmark_results results[9];
+benchmark_results results[5];
 volatile int currentIteration = 0;
 /*
   start_time
@@ -140,12 +138,7 @@ int main(void)
 
 	  //TODO: Call the Mandelbrot Function and store the output in the checksum variable defined initially
 	  //uint64_t checksum = calculate_mandelbrot_double(width, height, MAX_ITER);
-	  uint64_t checksum;
-	  if (image_widths[i] > 800){
-		  checksum = calculate_mandelbrot_fixed_point_arithmetic_split(width, height, MAX_ITERS);
-	  } else {
-		  checksum = calculate_mandelbrot_fixed_point_arithmetic(width, height, MAX_ITERS);
-	  }
+	  uint64_t checksum  = calculate_mandelbrot_fixed_point_arithmetic(width, height, MAX_ITERS);
 
 	  //TODO: Record the end time
 	  end_cycles = get_cycle_count();
@@ -155,9 +148,7 @@ int main(void)
 
 	  results[i].image_size = image_widths[i];
 	  results[i].wall_clock_time_ms = wall_clock_time;
-	  results[i].cpu_cycles = end_cycles - start_cycles;
 	  results[i].checksum = checksum;
-	  results[i].throughput_pixel_per_second = calculate_throughput(width, height, wall_clock_time);
 
 
 	  //TODO: Calculate the execution time

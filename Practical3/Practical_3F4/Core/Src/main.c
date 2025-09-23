@@ -138,7 +138,7 @@ int main(void)
 
 	  //TODO: Call the Mandelbrot Function and store the output in the checksum variable defined initially
 	  //uint64_t checksum = calculate_mandelbrot_double(width, height, MAX_ITER);
-	  uint64_t checksum = calculate_mandelbrot_double(width, height, MAX_ITERS);
+	  uint64_t checksum = calculate_mandelbrot_fixed_point_arithmetic(width, height, MAX_ITERS);
 
 
 	  //TODO: Record the end time
