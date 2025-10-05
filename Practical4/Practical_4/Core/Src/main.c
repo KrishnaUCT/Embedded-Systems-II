@@ -38,6 +38,13 @@
 #define TIM2CLK   // STM Clock frequency: Hint You might want to check the ioc file
 #define F_SIGNAL  	// Frequency of output analog signal
 
+#define SINE 0
+#define SAWTOOTH 1
+#define TRIANGLE 2
+#define PIANO 3
+#define GUITAR 4
+#define DRUM 5
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -59,8 +66,10 @@ uint32_t Piano_LUT = {};
 uint32_t Guitar_LUT = {};
 uint32_t Drum_LUT = {};
 
+// Track current waveform
+uint32_t currentLUT = SINE;
 
-
+uint32_t buttonLastPressed = 0;
 
 
 // TODO: Equation to calculate TIM2_Ticks
@@ -118,6 +127,13 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
+
+  // TODO: Initialize LCD
+  init_LCD();
+  lcd_command(DISPLAY_ON);
+  lcd_command(CLEAR);
+  lcd_command(CURSOR_HOME);
+
   // TODO: Start TIM3 in PWM mode on channel 3
 
   // TODO: Start TIM2 in Output Compare (OC) mode on channel 1
@@ -125,6 +141,7 @@ int main(void)
   // TODO: Start DMA in IT mode on TIM2->CH1. Source is LUT and Dest is TIM3->CCR3; start with Sine LUT
 
   // TODO: Write current waveform to LCD(Sine is the first waveform)
+  lcd_command(CLEAR); lcd_putstring("SINE");
 
   // TODO: Enable DMA (start transfer from LUT to CCR)
 
@@ -135,7 +152,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+	  //lcd_putstring("HELLO!");
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -394,16 +411,35 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void EXTI0_IRQHandler(void){
 
-	// TODO: Debounce using HAL_GetTick()
-
-
-	// TODO: Disable DMA transfer and abort IT, then start DMA in IT mode with new LUT and re-enable transfer
-	// HINT: Consider using C's "switch" function to handle LUT changes
-
-
-
-
 	HAL_GPIO_EXTI_IRQHandler(Button0_Pin); // Clear interrupt flags
+
+	// TODO: Debounce using HAL_GetTick()
+	if (HAL_GetTick() - buttonLastPressed > 200){
+		buttonLastPressed = HAL_GetTick();
+
+		// TODO: Disable DMA transfer and abort IT, then start DMA in IT mode with new LUT and re-enable transfer
+		// HINT: Consider using C's "switch" function to handle LUT changes
+
+		currentLUT += 1;
+
+		if (currentLUT == 6){
+			currentLUT = 0;
+		}
+
+		switch(currentLUT){
+			case SINE: lcd_command(CLEAR); lcd_putstring("SINE"); break;
+			case SAWTOOTH: lcd_command(CLEAR); lcd_putstring("SAWTOOTH"); break;
+			case TRIANGLE: lcd_command(CLEAR); lcd_putstring("TRIANGLE"); break;
+			case PIANO: lcd_command(CLEAR); lcd_putstring("PIANO"); break;
+			case GUITAR: lcd_command(CLEAR); lcd_putstring("GUITAR"); break;
+			case DRUM: lcd_command(CLEAR); lcd_putstring("DRUM"); break;
+
+		}
+	}
+
+
+
+
 }
 /* USER CODE END 4 */
 
