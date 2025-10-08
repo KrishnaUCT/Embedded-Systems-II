@@ -1556,7 +1556,7 @@ LOAD /opt/st/stm32cubeide_1.19.0_2/plugins/com.st.stm32cube.ide.mcu.externaltool
 .rel.dyn        0x08002768        0x0
  .rel.iplt      0x08002768        0x0 /opt/st/stm32cubeide_1.19.0_2/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.linux64_1.0.0.202410170706/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v7e-m+fp/hard/crtbegin.o
 
-.data           0x20000000     0x6010 load address 0x08002768
+.data           0x20000000     0x6014 load address 0x08002768
                 0x20000000                        . = ALIGN (0x4)
                 0x20000000                        _sdata = .
  *(.data)
@@ -1564,50 +1564,50 @@ LOAD /opt/st/stm32cubeide_1.19.0_2/plugins/com.st.stm32cube.ide.mcu.externaltool
  .data.DestAddress
                 0x20000000        0x4 build/main.o
                 0x20000000                DestAddress
+ .data.TIM2_Ticks
+                0x20000004        0x4 build/main.o
+                0x20000004                TIM2_Ticks
  .data.Drum_LUT
-                0x20000004     0x1000 build/main.o
-                0x20000004                Drum_LUT
+                0x20000008     0x1000 build/main.o
+                0x20000008                Drum_LUT
  .data.Guitar_LUT
-                0x20001004     0x1000 build/main.o
-                0x20001004                Guitar_LUT
+                0x20001008     0x1000 build/main.o
+                0x20001008                Guitar_LUT
  .data.Piano_LUT
-                0x20002004     0x1000 build/main.o
-                0x20002004                Piano_LUT
+                0x20002008     0x1000 build/main.o
+                0x20002008                Piano_LUT
  .data.Triangle_LUT
-                0x20003004     0x1000 build/main.o
-                0x20003004                Triangle_LUT
- .data.Saw_LUT  0x20004004     0x1000 build/main.o
-                0x20004004                Saw_LUT
- .data.Sin_LUT  0x20005004     0x1000 build/main.o
-                0x20005004                Sin_LUT
+                0x20003008     0x1000 build/main.o
+                0x20003008                Triangle_LUT
+ .data.Saw_LUT  0x20004008     0x1000 build/main.o
+                0x20004008                Saw_LUT
+ .data.Sin_LUT  0x20005008     0x1000 build/main.o
+                0x20005008                Sin_LUT
  .data.uwTickFreq
-                0x20006004        0x1 build/stm32f4xx_hal.o
-                0x20006004                uwTickFreq
- *fill*         0x20006005        0x3 
+                0x20006008        0x1 build/stm32f4xx_hal.o
+                0x20006008                uwTickFreq
+ *fill*         0x20006009        0x3 
  .data.uwTickPrio
-                0x20006008        0x4 build/stm32f4xx_hal.o
-                0x20006008                uwTickPrio
+                0x2000600c        0x4 build/stm32f4xx_hal.o
+                0x2000600c                uwTickPrio
  .data.SystemCoreClock
-                0x2000600c        0x4 build/system_stm32f4xx.o
-                0x2000600c                SystemCoreClock
+                0x20006010        0x4 build/system_stm32f4xx.o
+                0x20006010                SystemCoreClock
  *(.RamFunc)
  *(.RamFunc*)
-                0x20006010                        . = ALIGN (0x4)
-                0x20006010                        _edata = .
+                0x20006014                        . = ALIGN (0x4)
+                0x20006014                        _edata = .
 
-.igot.plt       0x20006010        0x0 load address 0x08008778
- .igot.plt      0x20006010        0x0 /opt/st/stm32cubeide_1.19.0_2/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.linux64_1.0.0.202410170706/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v7e-m+fp/hard/crtbegin.o
-                0x20006010                        . = ALIGN (0x4)
+.igot.plt       0x20006014        0x0 load address 0x0800877c
+ .igot.plt      0x20006014        0x0 /opt/st/stm32cubeide_1.19.0_2/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.linux64_1.0.0.202410170706/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v7e-m+fp/hard/crtbegin.o
+                0x20006014                        . = ALIGN (0x4)
 
-.bss            0x20006010      0x11c load address 0x08008778
-                0x20006010                        _sbss = .
-                0x20006010                        __bss_start__ = _sbss
+.bss            0x20006014      0x118 load address 0x0800877c
+                0x20006014                        _sbss = .
+                0x20006014                        __bss_start__ = _sbss
  *(.bss)
- .bss           0x20006010       0x1c /opt/st/stm32cubeide_1.19.0_2/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.linux64_1.0.0.202410170706/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v7e-m+fp/hard/crtbegin.o
+ .bss           0x20006014       0x1c /opt/st/stm32cubeide_1.19.0_2/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.linux64_1.0.0.202410170706/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v7e-m+fp/hard/crtbegin.o
  *(.bss*)
- .bss.TIM2_Ticks
-                0x2000602c        0x4 build/main.o
-                0x2000602c                TIM2_Ticks
  .bss.buttonLastPressed
                 0x20006030        0x4 build/main.o
                 0x20006030                buttonLastPressed
@@ -1629,7 +1629,7 @@ LOAD /opt/st/stm32cubeide_1.19.0_2/plugins/com.st.stm32cube.ide.mcu.externaltool
                 0x2000612c                        __bss_end__ = _ebss
 
 ._user_heap_stack
-                0x2000612c      0x604 load address 0x08008778
+                0x2000612c      0x604 load address 0x0800877c
                 0x20006130                        . = ALIGN (0x8)
  *fill*         0x2000612c        0x4 
                 [!provide]                        PROVIDE (end = .)
@@ -1713,21 +1713,21 @@ LOAD /opt/st/stm32cubeide_1.19.0_2/plugins/com.st.stm32cube.ide.mcu.externaltool
  .comment       0x00000043       0x44 build/stm32f4xx_hal.o
  .comment       0x00000043       0x44 build/system_stm32f4xx.o
 
-.debug_info     0x00000000     0xe558
- .debug_info    0x00000000     0x1c5a build/main.o
- .debug_info    0x00001c5a      0x657 build/lcd_stm32f4.o
- .debug_info    0x000022b1      0x47b build/stm32f4xx_it.o
- .debug_info    0x0000272c      0xc9d build/stm32f4xx_hal_msp.o
- .debug_info    0x000033c9     0x41a0 build/stm32f4xx_hal_tim.o
- .debug_info    0x00007569     0x1da5 build/stm32f4xx_hal_tim_ex.o
- .debug_info    0x0000930e      0xc73 build/stm32f4xx_hal_rcc.o
- .debug_info    0x00009f81      0xddc build/stm32f4xx_hal_rcc_ex.o
- .debug_info    0x0000ad5d      0x8ac build/stm32f4xx_hal_gpio.o
- .debug_info    0x0000b609      0xbce build/stm32f4xx_hal_dma.o
- .debug_info    0x0000c1d7     0x11fe build/stm32f4xx_hal_cortex.o
- .debug_info    0x0000d3d5      0xb5c build/stm32f4xx_hal.o
- .debug_info    0x0000df31      0x5f7 build/system_stm32f4xx.o
- .debug_info    0x0000e528       0x30 build/startup_stm32f446xx.o
+.debug_info     0x00000000     0xe55b
+ .debug_info    0x00000000     0x1c5d build/main.o
+ .debug_info    0x00001c5d      0x657 build/lcd_stm32f4.o
+ .debug_info    0x000022b4      0x47b build/stm32f4xx_it.o
+ .debug_info    0x0000272f      0xc9d build/stm32f4xx_hal_msp.o
+ .debug_info    0x000033cc     0x41a0 build/stm32f4xx_hal_tim.o
+ .debug_info    0x0000756c     0x1da5 build/stm32f4xx_hal_tim_ex.o
+ .debug_info    0x00009311      0xc73 build/stm32f4xx_hal_rcc.o
+ .debug_info    0x00009f84      0xddc build/stm32f4xx_hal_rcc_ex.o
+ .debug_info    0x0000ad60      0x8ac build/stm32f4xx_hal_gpio.o
+ .debug_info    0x0000b60c      0xbce build/stm32f4xx_hal_dma.o
+ .debug_info    0x0000c1da     0x11fe build/stm32f4xx_hal_cortex.o
+ .debug_info    0x0000d3d8      0xb5c build/stm32f4xx_hal.o
+ .debug_info    0x0000df34      0x5f7 build/system_stm32f4xx.o
+ .debug_info    0x0000e52b       0x30 build/startup_stm32f446xx.o
 
 .debug_abbrev   0x00000000     0x1ec6
  .debug_abbrev  0x00000000      0x2c1 build/main.o
